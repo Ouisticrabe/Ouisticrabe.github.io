@@ -5,9 +5,9 @@
  */
 
 // variable definitions
-var CACHE_NAME = 'Ouisticrabe-v1';
+var CACHE_NAME = 'ginkobusPWA-v1';
 
-var appShellFiles = [
+var contentToCache = [
     './index.html',
     './ginkobusPWA.webmanifest',
     './style.css',
@@ -30,13 +30,15 @@ self.addEventListener('install', function(e) {
     console.log('[Service Worker] Install');
     e.waitUntil(caches.open(CACHE_NAME).then(function(cache) {
         console.log('[Service Worker] Caching application content & data');
-        return cache.addAll(appShellFiles);
+        return cache.addAll(contentToCache);
     }));
 });
 
 
 self.addEventListener('fetch', (e) => {
-    e.respondWith(
+
+    // Stratégie initiale : cache ou network avec mise en cache (le "false &&" empêche son application)
+    false && e.respondWith(
         caches.match(e.request).then((r) => {
             console.log('[Service Worker] Fetching resource: '+e.request.url);
             return r ||
@@ -51,13 +53,13 @@ self.addEventListener('fetch', (e) => {
     );
 
 
-    // cache-only
-    if (appShellFiles.some(file => e.request.url.endsWith(file.substr(2)) && !e.request.url.endsWith("app.js"))) {
+    // Stratégie cache-only
+    if (contentToCache.some(file => e.request.url.endsWith(file.substr(2)) && !e.request.url.endsWith("app.js"))) {
         console.log('[Service Worker] Loading from cache: '+e.request.url);
         e.respondWith(caches.match(e.request));
     }
     else {
-        // network + mise en cache
+        // Stratégie network + mise en cache, ou alors cache, ou réponse par défaut
         e.respondWith(fetch(e.request)
             .then((response) => {
                 return caches.open(CACHE_NAME).then((cache) => {
