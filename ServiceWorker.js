@@ -5,7 +5,7 @@ var cacheName = 'ginkobusPWA-v1';
 
 var contentToCache = [
     './index.html',
-    './ginkobusPWA.webmanifest',
+    './GinkoBus.webmanifest',
     './style.css',
     './app.js',
     './icons/favicon.ico',
