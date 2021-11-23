@@ -49,13 +49,12 @@ self.addEventListener('fetch', (e) => {
     );
 
 
-    // Stratégie cache-only
+
     if (contentToCache.some(file => e.request.url.endsWith(file.substr(2)) && !e.request.url.endsWith("app.js"))) {
         console.log('[Service Worker] Loading from cache: '+e.request.url);
         e.respondWith(caches.match(e.request));
     }
     else {
-        // Stratégie network + mise en cache, ou alors cache, ou réponse par défaut
         e.respondWith(fetch(e.request)
             .then((response) => {
                 return caches.open(cacheName).then((cache) => {
@@ -67,7 +66,7 @@ self.addEventListener('fetch', (e) => {
             .catch(function() {
                 return caches.match(e.request).then((r) => {
                     console.log('[Service Worker] Looking for resource in cache: '+e.request.url);
-                    return r; // || new Response(JSON.stringify({ error: 1 }), { headers: { 'Content-Type': 'application/json' } }); <-- si on veut renvoyer un JSON indiquant l'erreur au lieu de laisser une erreur d'accès être capturée par l'application.
+                    return r;
                 })
             })
         );
