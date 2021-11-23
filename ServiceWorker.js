@@ -32,9 +32,7 @@ self.addEventListener('install', (e) => {
 });
 
 self.addEventListener('fetch', (e) => {
-
-    // Stratégie initiale : cache ou network avec mise en cache (le "false &&" empêche son application)
-    e.respondWith(
+    false && e.respondWith(
         caches.match(e.request).then((r) => {
             console.log('[Service Worker] Fetching resource: '+e.request.url);
             return r ||
